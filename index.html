@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>菲菲朕天下專屬｜賽特爆分機率房</title>
+
+<style>
+body{
+    font-family:"Microsoft JhengHei",Arial,sans-serif;
+    margin:0;
+    padding:14px 10px 40px;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+    background:#000;
+    overflow:hidden;
+}
+
+#heartCanvas{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+}
+
+.container{
+    width:100%;
+    max-width:420px;
+    text-align:center;
+    position:relative;
+    z-index:2;
+}
+
+h1{
+    font-size:20px;
+    line-height:1.4;
+    margin-bottom:16px;
+    text-shadow:0 0 18px currentColor;
+}
+
+/* 按鈕（顏色由 JS 控制） */
+button{
+    width:100%;
+    margin:10px 0 18px;
+    padding:16px;
+    font-size:18px;
+    font-weight:bold;
+    border:none;
+    border-radius:20px;
+    cursor:pointer;
+    color:#fff;
+    box-shadow:
+        0 6px 18px rgba(0,0,0,.55),
+        inset 0 -2px 6px rgba(255,255,255,.4);
+    animation: heartBeat 1.6s ease-in-out infinite;
+}
+
+@keyframes heartBeat{
+    50%{ transform:scale(1.08); }
+}
+
+.slot-container{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+}
+
+.slot{
+    background:rgba(15,15,15,.92);
+    border-radius:14px;
+    padding:14px;
+    display:flex;
+    justify-content:space-between;
+    font-size:16px;
+}
+
+.highest{
+    border:2px solid currentColor;
+    color:currentColor;
+    box-shadow:0 0 40px currentColor;
+}
+
+.high{
+    border:2px solid #fff;
+    color:#fff;
+    box-shadow:0 0 16px rgba(255,255,255,.6);
+}
+</style>
+</head>
+
+<body>
+<canvas id="heartCanvas"></canvas>
+
+<div class="container">
+<h1 id="title">♥ 菲菲朕天下專屬 ♥｜賽特II爆分機率房</h1>
+
+<button id="toggleBtn" onclick="toggleVersion()">切換版本</button>
+
+<div id="slots" class="slot-container"></div>
+</div>
+
+<script>
+/* ===== Canvas 愛心 ===== */
+const canvas=document.getElementById("heartCanvas");
+const ctx=canvas.getContext("2d");
+let hearts=[];
+let mainColor="#ff69b4";
+
+function resize(){
+ canvas.width=innerWidth;
+ canvas.height=innerHeight;
+}
+resize();
+addEventListener("resize",resize);
+
+function spawnHeart(){
+ hearts.push({
+   x:Math.random()*canvas.width,
+   y:canvas.height+30,
+   speed:2+Math.random()*2,
+   alpha:.4+Math.random()*.6
+ });
+}
+
+function draw(){
+ ctx.fillStyle="rgba(0,0,0,0.28)";
+ ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ ctx.font="22px monospace";
+ hearts.forEach(h=>{
+   ctx.globalAlpha=h.alpha;
+   ctx.fillStyle=mainColor;
+   ctx.fillText("♥",h.x,h.y);
+   h.y-=h.speed;
+ });
+ ctx.globalAlpha=1;
+
+ hearts=hearts.filter(h=>h.y>-60);
+ if(Math.random()>0.45) spawnHeart();
+
+ requestAnimationFrame(draw);
+}
+draw();
+
+function resetHearts(){
+ hearts=[];
+ for(let i=0;i<30;i++) spawnHeart();
+}
+
+/* ===== 資料 ===== */
+const data=[
+ {r:1288,p:89,t:"highest"},
+ {r:2256,p:87,t:"highest"},
+ {r:301,p:86,t:"highest"},
+ {r:1777,p:82,t:"high"},
+ {r:2640,p:79,t:"high"},
+ {r:988,p:76,t:"high"},
+ {r:451,p:72,t:""},
+ {r:1920,p:68,t:""},
+ {r:339,p:65,t:""}
+];
+
+const slots=document.getElementById("slots");
+const title=document.getElementById("title");
+const btn=document.getElementById("toggleBtn");
+
+data.forEach(d=>{
+ const div=document.createElement("div");
+ div.className="slot "+d.t;
+ div.innerHTML=`<span>第 ${d.r} 房</span><span>${d.p}%</span>`;
+ slots.appendChild(div);
+});
+
+/* ===== 版本控制 ===== */
+let version="II";
+
+function applyTheme(){
+ title.innerText=`♥ 菲菲朕天下專屬 ♥｜賽特${version}爆分機率房`;
+ title.style.color=mainColor;
+
+ btn.style.background =
+   version==="II"
+   ? "linear-gradient(to bottom,#ffb6c1,#ff69b4)"
+   : "linear-gradient(to bottom,#d9b3ff,#b96bff)";
+
+ document.querySelectorAll(".highest").forEach(el=>{
+   el.style.color=mainColor;
+   el.style.borderColor=mainColor;
+   el.style.boxShadow=`0 0 40px ${mainColor}`;
+ });
+}
+
+function toggleVersion(){
+ version=version==="II"?"I":"II";
+ mainColor=version==="II"?"#ff69b4":"#c77dff";
+ applyTheme();
+ resetHearts();
+}
+
+/* 初始化 */
+applyTheme();
+resetHearts();
+</script>
+</body>
+</html>
